@@ -21,14 +21,10 @@ import java.util.Random;
  * </p>
  */
 public class Board extends JPanel {
-	
-	private int gradeColuna = 10;
-	private int gradeLinha = 20;
-	private int gradeArea = 30;
+	private final int gradeColuna = 10, gradeLinha = 20, gradeArea = 30;
 	
 	private Timer looper; 
-	private int velocidadeRapida = 16;
-	private int velocidadeNormal = 250;
+	private int velocidadeRapida = 16, velocidadeNormal = 250;
 	private int delayVelocidade = velocidadeNormal;
 	
 	private Tetromino bloco;
@@ -107,30 +103,15 @@ public class Board extends JPanel {
 		int seletor = random.nextInt(7);
 
 	    switch (seletor) {
-	        case 0:
-	            bloco = Tetromino.blocoI();
-	            break;
-	        case 1:
-	            bloco = Tetromino.blocoO();
-	            break;
-	        case 2:
-	            bloco = Tetromino.blocoT();
-	            break;
-	        case 3:
-	            bloco = Tetromino.blocoL();
-	            break;
-	        case 4:
-	            bloco = Tetromino.blocoJ();
-	            break;
-	        case 5:
-	            bloco = Tetromino.blocoS();
-	            break;
-	        case 6:
-	            bloco = Tetromino.blocoZ();
-	            break;
+	        case 0: bloco = Tetromino.blocoI(); break;
+	        case 1: bloco = Tetromino.blocoO(); break;
+	        case 2: bloco = Tetromino.blocoT(); break;
+	        case 3: bloco = Tetromino.blocoL(); break;
+	        case 4: bloco = Tetromino.blocoJ(); break;
+	        case 5: bloco = Tetromino.blocoS(); break;
+	        case 6: bloco = Tetromino.blocoZ(); break;
 	    }
 	    bloco.spawn(gradeColuna);
-
 	    if (verificaColisaoAoNascer()) {
 	    	looper.stop();
 	        jogoTerminado = true;
@@ -246,7 +227,6 @@ public class Board extends JPanel {
 	 */
 	public void moveBlocoDireita() {
 		if (jogoTerminado) return;
-			
 		if (!colisao(bloco, bloco.getX() + 1, bloco.getY())) {
 	        bloco.moveDireita();
 	        repaint();
@@ -258,7 +238,6 @@ public class Board extends JPanel {
 	 */
 	public void moveBlocoEsquerda() {
 		if (jogoTerminado) return;
-		
 		if (!colisao(bloco, bloco.getX() - 1, bloco.getY())) {
 	        bloco.moveEsquerda();
 	        repaint();
@@ -383,11 +362,11 @@ public class Board extends JPanel {
 	
 	@Override
 	protected void paintComponent(Graphics grade) {
-		super.paintComponent(grade) ;
+		super.paintComponent(grade);
 		// Adciona a cor no fundo da area do jogo
 		grade.setColor(Color.black);
 		grade.fillRect(0, 0, getWidth(), getHeight());
-
+		
         // Cria os formatos do tetris
 		grade.setColor(Color.white);
         for(int linha = 0; linha <= gradeLinha; linha++){
@@ -396,7 +375,7 @@ public class Board extends JPanel {
 		for(int coluna = 0; coluna <= gradeColuna; coluna++){
 			grade.drawLine(coluna * gradeArea, 0, coluna * gradeArea, gradeArea * gradeLinha);
 		}
-		
+
 		// Gera blocos para o painel
 		for(int linha = 0; linha < bloco.getHeight(); linha++) {
 			for(int coluna = 0; coluna < bloco.getWidth(); coluna++){
@@ -410,6 +389,17 @@ public class Board extends JPanel {
 			}
 		}
 		geraFundoBlocos(grade);
+		
+		// Exibe o texto de Game Over na tela
+		if(jogoTerminado) {
+			grade.setColor(Color.BLACK);
+		    grade.fillRect(25, 280, 260, 70);
+			
+			grade.setFont(new Font("Times New Roman", Font.BOLD, 36));
+		    grade.setColor(Color.WHITE);
+			grade.drawString("GAME OVER", 40, 328);
+			
+		}
 	}
 	
 }

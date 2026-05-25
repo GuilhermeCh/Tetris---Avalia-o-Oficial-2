@@ -1,12 +1,15 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import javax.swing.*;
 
 /**
  * Janela principal do jogo Tetris.
  * <p>
- * Estende o link JFrame e implementa o link KeyListener para capturar
+ * Estende o link JFrame, implementa ActionListener para o clique do botão de reset, 
+ * limpando os componentes antigos da memória para evitar sobreposição visual e de pontuação. Implementa o link KeyListener para capturar
  * as entradas do teclado e repassá-las ao link Board. As teclas mapeadas são:
  * <ul>
  *   <li>← : mover a peça para a esquerda</li>
@@ -19,31 +22,42 @@ import javax.swing.*;
  * {@code requestFocusInWindow()}.
  * </p>
  */
-public class TetrisPanel extends JFrame implements KeyListener{
+public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
+	
 	private Board area;
 	private JLabel labelPontuacao;
+	private JButton botaoReset;
 
 	/**
 	 * Constrói a janela do Tetris, inicializa o painel de jogo e o label de pontuação
 	 */
     public TetrisPanel() {
     	setTitle("Tetris");
-        setSize(315, 650);
+        setSize(425, 640);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
+        setLayout(null);
         setLocationRelativeTo(null);
-
-        labelPontuacao = new JLabel("Pontuação: 0", SwingConstants.CENTER);
-
+        
         area = new Board();
+        area.setBounds(0, 0, 302, 640);
+        add(area);
+        
+        labelPontuacao = new JLabel("Pontuação: 0", SwingConstants.CENTER);
+        labelPontuacao.setForeground(Color.WHITE); 
+        labelPontuacao.setBounds(305, 260, 100, 30);
         area.setLabelPontuacao(labelPontuacao);
-
-        setLayout(new BorderLayout());
-        add(area, BorderLayout.CENTER);
-        add(labelPontuacao, BorderLayout.SOUTH);
+        add(labelPontuacao);
+        
+        botaoReset = new JButton("Reset");
+        botaoReset.setBounds(305, 520, 100, 40);
+        botaoReset.addActionListener(this);
+        add(botaoReset);
 
         addKeyListener(this);
         setFocusable(true);
+        
+        getContentPane().setBackground(Color.BLACK);
         
         setVisible(true);
         requestFocusInWindow();
@@ -53,6 +67,30 @@ public class TetrisPanel extends JFrame implements KeyListener{
     	new TetrisPanel();
     }
 
+    // Faz o reset do game
+    @Override
+    public void actionPerformed(ActionEvent reset) {
+    	if(reset.getSource() == botaoReset) {
+    		remove(area);
+    		remove(labelPontuacao);
+    		
+    		area = new Board();
+    		area.setBounds(0, 0, 302, 640);
+            add(area);
+            
+            labelPontuacao = new JLabel("Pontuação: 0", SwingConstants.CENTER);
+            labelPontuacao.setForeground(Color.WHITE); 
+            labelPontuacao.setBounds(305, 260, 100, 30);
+            area.setLabelPontuacao(labelPontuacao);
+            add(labelPontuacao);
+  
+    		revalidate();
+    		repaint();
+    		
+    		requestFocusInWindow();
+    	}
+    }
+    
     @Override
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
