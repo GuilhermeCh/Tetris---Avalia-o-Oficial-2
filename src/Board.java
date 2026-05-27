@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.util.Random;
 
 /**
@@ -21,21 +19,24 @@ import java.util.Random;
  * </p>
  */
 public class Board extends JPanel {
+	
 	private final int gradeColuna = 10, gradeLinha = 20, gradeArea = 30;
 	
-	private Timer looper; 
-	private int velocidadeRapida = 16, velocidadeNormal = 250;
-	private int delayVelocidade = velocidadeNormal;
-	
 	private Tetromino bloco;
+	private Tetromino proximoBloco;
 	private Color[][] fundoBlocos;
 
+	private int velocidadeRapida = 16, velocidadeBase = 500;
+	private int velocidadeAtual = velocidadeBase;
+	
 	private boolean jogoTerminado = false;
 	
 	private Random random = new Random();
 
 	private int pontuacao = 0;
+	private int level = 1;
 	private JLabel labelPontuacao;
+	private JLabel labelLevel;
 
 	/**
 	 * Constrói o painel de jogo, inicializa a grade, cria a primeira peça
@@ -43,26 +44,7 @@ public class Board extends JPanel {
 	 */
 	public Board() {
 		fundoBlocos = new Color[gradeLinha][gradeColuna];
-		criaBloco();
-
-		looper = new Timer(delayVelocidade, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evento) {
-            	if (jogoTerminado) {
-                    looper.stop();
-                    return;
-                } else if(colisao(bloco, bloco.getX(), bloco.getY() + 1) == true) {
-            		fixarPeca(bloco, bloco.getX(), bloco.getY());
-            		int removidas = removerLinhasCompletas();
-            		atualizaPontuacao(removidas);
-            		criaBloco();
-            	} else {
-            		bloco.descerBloco();
-            	}
-        		repaint();
-            }
-        });
-        looper.start();
+	    iniciarJogo();
 	}
 
 	/**
@@ -73,12 +55,21 @@ public class Board extends JPanel {
 		this.labelPontuacao = label;
 		atualizaPontuacao(0);
 	}
+	
+	/**
+	 * Define o label que vai exibir o score na tela
+	 * @param label JLabel onde o score será exibida
+	 */
+	public void setLabelLevel(JLabel label) {
+		this.labelLevel = label;
+		atualizaLevel();
+	}
 
 	/**
 	 * Atualiza a pontuação de acordo com as linhas removidas
 	 * @param linhasRemovidas Quantidade de linhas removidas de uma vez
 	 */
-	private void atualizaPontuacao(int linhasRemovidas) {
+	public void atualizaPontuacao(int linhasRemovidas) {
 		switch (linhasRemovidas) {
 			case 1: pontuacao += 100; break;
 			case 2: pontuacao += 300; break;
@@ -88,6 +79,19 @@ public class Board extends JPanel {
 		if (labelPontuacao != null) {
 			labelPontuacao.setText("Pontuação: " + pontuacao);
 		}
+		// Atualiza level
+		level = (pontuacao / 500) + 1;
+		velocidadeNormal();
+		atualizaLevel();
+	}
+	
+	/**
+	 * Atualiza o level de acordo com as linhas removidas
+	 */
+	private void atualizaLevel() {
+		if (labelLevel != null) {
+			labelLevel.setText("Level: " + level);
+		}
 	}
 
 	/**
@@ -95,6 +99,20 @@ public class Board extends JPanel {
 	 * @return Pontuação acumulada
 	 */
 	public int getPontuacao() { return pontuacao; }
+	
+	/**
+	 * Cria uma Thread e incia o jogo
+	 */
+	public void iniciarJogo() {
+		new TetrisThread(this).start();
+	}
+	
+	/**
+	 * Cria o proximo bloco
+	 */
+	public void geraProximoBloco() {
+		new TetrisThread(this).start();
+	}
 	
 	/**
 	 * Seleciona aleatoriamente um bloco e gera ele na grade
@@ -112,8 +130,8 @@ public class Board extends JPanel {
 	        case 6: bloco = Tetromino.blocoZ(); break;
 	    }
 	    bloco.spawn(gradeColuna);
+	    
 	    if (verificaColisaoAoNascer()) {
-	    	looper.stop();
 	        jogoTerminado = true;
 	    }	
 	}
@@ -125,7 +143,7 @@ public class Board extends JPanel {
 	 * @param x Posição X do bloco
 	 * @param y Posição Y do bloco
 	 */
-	private void desenhaBlocoGrade(Graphics grade, Color color, int x, int y) {
+	private void desenhaBloco(Graphics grade, Color color, int x, int y) {
 		// Desenha o bloco
 		grade.setColor(color);
 		grade.fillRect(x, y, gradeArea, gradeArea);
@@ -174,7 +192,7 @@ public class Board extends JPanel {
 					int x = c * gradeArea;
 					int y = l * gradeArea;
 					
-					desenhaBlocoGrade(grade, color, x, y);
+					desenhaBloco(grade, color, x, y);
 				}
 			}
 		}
@@ -223,6 +241,21 @@ public class Board extends JPanel {
 	}
 	
 	/**
+	 * Move o bloco para baixo e converte o bloco para Fundo
+	 * @return Retorna verdadeiro caso nao tenha colisao e move o bloco para baixo, caso o contrario, retorna falso e fixa o bloco no fundo
+	 */
+	public boolean moveBlocoBaixo() {
+		if (jogoTerminado) return false;
+		if (colisao(bloco, bloco.getX(), bloco.getY() + 1)) {
+			fixarPeca(bloco, bloco.getX(), bloco.getY());
+			return false;
+		}
+		bloco.descerBloco();
+		repaint();
+		return true;
+	}
+	
+	/**
 	 * Move o bloco para a direita enquanto estiver caindo e verifica a colisão da borda esquerda dos blocos do fundo
 	 */
 	public void moveBlocoDireita() {
@@ -242,7 +275,7 @@ public class Board extends JPanel {
 	        bloco.moveEsquerda();
 	        repaint();
 	    }
-	}	
+	}
 	
 	/**
 	 * Rotaciona o bloco que esta caindo
@@ -266,22 +299,6 @@ public class Board extends JPanel {
 		atualizaPontuacao(removidas);
 		criaBloco();
 		repaint();
-	}
-	
-	/**
-	 * Move o bloco que estiver caindo na velocidade padrão
-	 */
-	public void retornaVelocidadeNormal(){
-		delayVelocidade = velocidadeNormal;
-		looper.setDelay(delayVelocidade);
-	}
-	
-	/**
-	 * Move o bloco que estiver caindo na velocidade rápida
-	 */
-	public void retornaVelocidadeRapida(){
-		delayVelocidade = velocidadeRapida;
-		looper.setDelay(delayVelocidade);
 	}
 	
 	/**
@@ -323,7 +340,7 @@ public class Board extends JPanel {
 	/**
 	 * Verifica se o bloco recém-criado está colidindo com blocos do fundo.
 	 */
-	private boolean verificaColisaoAoNascer() {
+	public boolean verificaColisaoAoNascer() {
 	    int[][] forma = bloco.getBloco();
 
 	    for (int l = 0; l < bloco.getHeight(); l++) {
@@ -360,14 +377,50 @@ public class Board extends JPanel {
 	 */
 	public boolean isJogoTerminado() { return jogoTerminado; }
 	
-	@Override
-	protected void paintComponent(Graphics grade) {
-		super.paintComponent(grade);
-		// Adciona a cor no fundo da area do jogo
+	/**
+	 * Retorna a velocidade atual do bloco no jogo
+	 * @return Velocidade atual do bloco
+	 */
+	public int getVelocidadeAtual() {
+	    return velocidadeAtual;
+	}
+
+	/**
+	 * Retorna a velocidade acelerado do bloco no jogo
+	 */
+	public void acelerarQuedaBloco() {
+	    velocidadeAtual = velocidadeRapida;
+	}
+
+	/**
+	 * Retorna a velocidade normal do bloco no jogo
+	 */
+	public void velocidadeNormal() {
+	    if(level > 20) {
+	        velocidadeAtual = 50;
+	    } else if(level > 10) {
+	        velocidadeAtual = 100;
+	    } else if(level > 5){
+	        velocidadeAtual = 200;
+	    } else if(level > 2){
+	        velocidadeAtual = 350;
+	    } else {
+	        velocidadeAtual = 500;
+	    }
+	}
+	
+	/**
+	 * Desenha o fundo preto do jogo
+	 */
+	private void desenhaFundoGrade(Graphics grade) {
 		grade.setColor(Color.black);
 		grade.fillRect(0, 0, getWidth(), getHeight());
-		
-        // Cria os formatos do tetris
+	}
+	
+	/**
+	 * Desenha as grades do jogo
+	 */
+	private void desenhaFormatoGrade(Graphics grade) {
 		grade.setColor(Color.white);
         for(int linha = 0; linha <= gradeLinha; linha++){
         	grade.drawLine(0, linha * gradeArea, gradeArea * gradeColuna, linha * gradeArea);
@@ -375,8 +428,12 @@ public class Board extends JPanel {
 		for(int coluna = 0; coluna <= gradeColuna; coluna++){
 			grade.drawLine(coluna * gradeArea, 0, coluna * gradeArea, gradeArea * gradeLinha);
 		}
-
-		// Gera blocos para o painel
+	}
+	
+	/**
+	 * Desenha os blocos do jogo
+	 */
+	private void desenhaBlocoGrade(Graphics grade) {
 		for(int linha = 0; linha < bloco.getHeight(); linha++) {
 			for(int coluna = 0; coluna < bloco.getWidth(); coluna++){
 				if(bloco.getBloco()[linha][coluna] == 1) {
@@ -384,13 +441,16 @@ public class Board extends JPanel {
 					int x = (bloco.getX() + coluna) * gradeArea;
 					int y = (bloco.getY() + linha) * gradeArea;
 					
-					desenhaBlocoGrade(grade, bloco.getCor(), x, y);
+					desenhaBloco(grade, bloco.getCor(), x, y);
 				}
 			}
 		}
-		geraFundoBlocos(grade);
-		
-		// Exibe o texto de Game Over na tela
+	}
+	
+	/**
+	 * Desenha os blocos do jogo
+	 */
+	private void desenhaGameOverGrade(Graphics grade) {
 		if(jogoTerminado) {
 			grade.setColor(Color.BLACK);
 		    grade.fillRect(25, 280, 260, 70);
@@ -398,8 +458,18 @@ public class Board extends JPanel {
 			grade.setFont(new Font("Times New Roman", Font.BOLD, 36));
 		    grade.setColor(Color.WHITE);
 			grade.drawString("GAME OVER", 40, 328);
-			
 		}
+	}
+	
+	@Override
+	protected void paintComponent(Graphics grade) {
+		super.paintComponent(grade);
+		
+		desenhaFundoGrade(grade);
+		desenhaFormatoGrade(grade);
+		desenhaBlocoGrade(grade);
+		geraFundoBlocos(grade);
+		desenhaGameOverGrade(grade);		
 	}
 	
 }

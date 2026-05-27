@@ -26,6 +26,7 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
 	
 	private Board area;
 	private JLabel labelPontuacao;
+	private JLabel labelLevel;
 	private JButton botaoReset;
 
 	/**
@@ -49,6 +50,12 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
         area.setLabelPontuacao(labelPontuacao);
         add(labelPontuacao);
         
+        labelLevel = new JLabel("Level: 1", SwingConstants.CENTER);
+        labelLevel.setForeground(Color.WHITE); 
+        labelLevel.setBounds(305, 240, 100, 30);
+        area.setLabelLevel(labelLevel);
+        add(labelLevel);
+        
         botaoReset = new JButton("Reset");
         botaoReset.setBounds(305, 520, 100, 40);
         botaoReset.addActionListener(this);
@@ -69,10 +76,11 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
 
     // Faz o reset do game
     @Override
-    public void actionPerformed(ActionEvent reset) {
-    	if(reset.getSource() == botaoReset) {
+    public void actionPerformed(ActionEvent resetEvent) {
+    	if(resetEvent.getSource() == botaoReset) {
     		remove(area);
     		remove(labelPontuacao);
+            remove(labelLevel);
     		
     		area = new Board();
     		area.setBounds(0, 0, 302, 640);
@@ -83,6 +91,12 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
             labelPontuacao.setBounds(305, 260, 100, 30);
             area.setLabelPontuacao(labelPontuacao);
             add(labelPontuacao);
+            
+            labelLevel = new JLabel("Level: 1", SwingConstants.CENTER);
+            labelLevel.setForeground(Color.WHITE); 
+            labelLevel.setBounds(305, 240, 100, 30);
+            area.setLabelLevel(labelLevel);
+            add(labelLevel);
   
     		revalidate();
     		repaint();
@@ -98,7 +112,7 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
 		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 			area.moveBlocoEsquerda();
 		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			area.retornaVelocidadeRapida();
+			area.acelerarQuedaBloco();
 		} else if (e.getKeyCode() == KeyEvent.VK_UP) {
 			area.rotacionar();
 		} else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -108,7 +122,7 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
     
     @Override
 	public void keyReleased(KeyEvent e) {
-		area.retornaVelocidadeNormal();
+    	area.velocidadeNormal();
 	}
     
 	@Override
