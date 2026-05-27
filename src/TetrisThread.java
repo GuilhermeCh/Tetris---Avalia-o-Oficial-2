@@ -10,7 +10,7 @@ public class TetrisThread extends Thread{
 	@Override
 	public void run() {
 		while(true) {
-			grade.criaBloco();
+			grade.spawnBloco();
 
 			// Verifica se o jogo terminou
 			if(grade.isJogoTerminado()) {

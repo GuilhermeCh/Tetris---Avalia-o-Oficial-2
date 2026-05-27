@@ -44,6 +44,7 @@ public class Board extends JPanel {
 	 */
 	public Board() {
 		fundoBlocos = new Color[gradeLinha][gradeColuna];
+		criaBloco();
 	    iniciarJogo();
 	}
 
@@ -100,6 +101,7 @@ public class Board extends JPanel {
 	 */
 	public int getPontuacao() { return pontuacao; }
 	
+	
 	/**
 	 * Cria uma Thread e incia o jogo
 	 */
@@ -108,29 +110,42 @@ public class Board extends JPanel {
 	}
 	
 	/**
-	 * Cria o proximo bloco
+	 * Gera uma peça aleatória baseada em um número de 0 a 6
+	 * @return Retorna o bloco aleátorio
 	 */
-	public void geraProximoBloco() {
-		new TetrisThread(this).start();
+	private Tetromino gerarPecaAleatoria() {
+		int numeroAleatorio = random.nextInt(7);
+		switch (numeroAleatorio) {
+			case 0: return Tetromino.blocoI();
+			case 1: return Tetromino.blocoO();
+			case 2: return Tetromino.blocoT();
+			case 3: return Tetromino.blocoL();
+			case 4: return Tetromino.blocoJ();
+			case 5: return Tetromino.blocoS();
+			case 6: return Tetromino.blocoZ();
+			default: return Tetromino.blocoI();
+		}
+	}
+
+	/**
+	 * Seleciona aleatoriamente um bloco e gerencia a fila do próximo bloco
+	 */
+	public void criaBloco() {
+		if (bloco == null) {
+			bloco = gerarPecaAleatoria();
+		} else if (proximoBloco != null) {
+			bloco = proximoBloco;
+		}
+		proximoBloco = gerarPecaAleatoria();
 	}
 	
 	/**
-	 * Seleciona aleatoriamente um bloco e gera ele na grade
+	 * Gera o spawn do bloco na grade e verifica o jogo terminou
 	 */
-	public void criaBloco() {
-		int seletor = random.nextInt(7);
-
-	    switch (seletor) {
-	        case 0: bloco = Tetromino.blocoI(); break;
-	        case 1: bloco = Tetromino.blocoO(); break;
-	        case 2: bloco = Tetromino.blocoT(); break;
-	        case 3: bloco = Tetromino.blocoL(); break;
-	        case 4: bloco = Tetromino.blocoJ(); break;
-	        case 5: bloco = Tetromino.blocoS(); break;
-	        case 6: bloco = Tetromino.blocoZ(); break;
-	    }
-	    bloco.spawn(gradeColuna);
-	    
+	public void spawnBloco() {
+		criaBloco();
+		bloco.spawn(gradeColuna);
+		
 	    if (verificaColisaoAoNascer()) {
 	        jogoTerminado = true;
 	    }	
@@ -393,7 +408,7 @@ public class Board extends JPanel {
 	}
 
 	/**
-	 * Retorna a velocidade normal do bloco no jogo
+	 * Atualiza a velocidade normal do bloco com base no level
 	 */
 	public void velocidadeNormal() {
 	    if(level > 20) {
@@ -448,6 +463,42 @@ public class Board extends JPanel {
 	}
 	
 	/**
+	 * Desenha o proximo bloco na grade next
+	 */
+	private void desenhaProximoBlocoGrade(Graphics grade) {
+		if (proximoBloco == null) return;
+
+		int xInicial = 380; 
+		int yInicial = 75;
+
+		for(int linha = 0; linha < proximoBloco.getHeight(); linha++) {
+			for(int coluna = 0; coluna < proximoBloco.getWidth(); coluna++){
+				if(proximoBloco.getBloco()[linha][coluna] == 1) {
+					
+					// Calcula a posição de cada quadradinho baseado na linha e coluna atual
+					int x = xInicial + (coluna * gradeArea);
+					int y = yInicial + (linha * gradeArea);
+					
+					desenhaBloco(grade, proximoBloco.getCor(), x, y);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Desenha as grades do proximo bloco no jogo
+	 */
+	private void desenhaGradeProximoBloco(Graphics grade) {
+		grade.setColor(Color.white);
+		grade.fillRect(320, 15, 180, 200);
+		grade.setColor(Color.black);
+		grade.fillRect(325, 20, 170, 190);
+		grade.setFont(new Font("Arial", Font.BOLD, 22));
+	    grade.setColor(Color.WHITE);
+		grade.drawString("NEXT", 378, 45);
+	}
+	
+	/**
 	 * Desenha os blocos do jogo
 	 */
 	private void desenhaGameOverGrade(Graphics grade) {
@@ -468,6 +519,8 @@ public class Board extends JPanel {
 		desenhaFundoGrade(grade);
 		desenhaFormatoGrade(grade);
 		desenhaBlocoGrade(grade);
+		desenhaGradeProximoBloco(grade);
+		desenhaProximoBlocoGrade(grade);
 		geraFundoBlocos(grade);
 		desenhaGameOverGrade(grade);		
 	}

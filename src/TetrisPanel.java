@@ -34,30 +34,30 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
 	 */
     public TetrisPanel() {
     	setTitle("Tetris");
-        setSize(425, 640);
+        setSize(650, 640);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLayout(null);
         setLocationRelativeTo(null);
         
         area = new Board();
-        area.setBounds(0, 0, 302, 640);
+        area.setBounds(120, 0, 520, 640);
         add(area);
         
         labelPontuacao = new JLabel("Pontuação: 0", SwingConstants.CENTER);
         labelPontuacao.setForeground(Color.WHITE); 
-        labelPontuacao.setBounds(305, 260, 100, 30);
+        labelPontuacao.setBounds(10, 260, 100, 30);
         area.setLabelPontuacao(labelPontuacao);
         add(labelPontuacao);
         
         labelLevel = new JLabel("Level: 1", SwingConstants.CENTER);
         labelLevel.setForeground(Color.WHITE); 
-        labelLevel.setBounds(305, 240, 100, 30);
+        labelLevel.setBounds(10, 240, 100, 30);
         area.setLabelLevel(labelLevel);
         add(labelLevel);
         
         botaoReset = new JButton("Reset");
-        botaoReset.setBounds(305, 520, 100, 40);
+        botaoReset.setBounds(10, 520, 100, 40);
         botaoReset.addActionListener(this);
         add(botaoReset);
 
@@ -82,22 +82,22 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
     		remove(labelPontuacao);
             remove(labelLevel);
     		
-    		area = new Board();
-    		area.setBounds(0, 0, 302, 640);
+            area = new Board();
+            area.setBounds(120, 0, 520, 640);
             add(area);
             
             labelPontuacao = new JLabel("Pontuação: 0", SwingConstants.CENTER);
             labelPontuacao.setForeground(Color.WHITE); 
-            labelPontuacao.setBounds(305, 260, 100, 30);
+            labelPontuacao.setBounds(10, 260, 100, 30);
             area.setLabelPontuacao(labelPontuacao);
             add(labelPontuacao);
             
             labelLevel = new JLabel("Level: 1", SwingConstants.CENTER);
             labelLevel.setForeground(Color.WHITE); 
-            labelLevel.setBounds(305, 240, 100, 30);
+            labelLevel.setBounds(10, 240, 100, 30);
             area.setLabelLevel(labelLevel);
             add(labelLevel);
-  
+            
     		revalidate();
     		repaint();
     		
