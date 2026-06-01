@@ -405,6 +405,103 @@ public class Board extends JPanel {
 	public Color[][] getFundoBlocos() { return fundoBlocos; }
 
 	/**
+	 * Retorna o bloco que está caindo atualmente.
+	 *
+	 * @return Tetromino atual
+	 */
+	public Tetromino getBlocoAtual() { return bloco; }
+	
+	/**
+	 * Retorna o índice do tipo do bloco atual (0=I, 1=O, 2=T, 3=L, 4=J, 5=S, 6=Z).
+	 *
+	 * @return índice do tipo do bloco atual
+	 */
+	public int getTipoBlocoAtual() {
+	    return getTipoDeTetromino(bloco);
+	}
+	
+	/**
+	 * Retorna o índice do tipo do próximo bloco.
+	 *
+	 * @return índice do tipo do próximo bloco
+	 */
+	public int getTipoProximoBloco() {
+	    return getTipoDeTetromino(proximoBloco);
+	}
+	
+	/**
+	 * Identifica o índice de tipo de um Tetromino pela sua cor.
+	 *
+	 * @param t Tetromino a identificar
+	 * @return índice de 0 a 6, ou 0 como padrão
+	 */
+	private int getTipoDeTetromino(Tetromino t) {
+	    if (t == null) return 0;
+	    Color cor = t.getCor();
+	    if (cor.equals(Color.CYAN))                return 0; // I
+	    if (cor.equals(Color.YELLOW))              return 1; // O
+	    if (cor.equals(Color.MAGENTA))             return 2; // T
+	    if (cor.equals(Tetromino.NEW_ORANGE))      return 3; // L
+	    if (cor.equals(Color.BLUE))                return 4; // J
+	    if (cor.equals(Color.GREEN))               return 5; // S
+	    if (cor.equals(Color.RED))                 return 6; // Z
+	    return 0;
+	}
+	
+	/**
+	 * Restaura a pontuação e o level após carregar um save.
+	 *
+	 * @param pontuacaoSalva pontuação a restaurar
+	 */
+	public void setPontuacaoCarregada(int pontuacaoSalva) {
+	    this.pontuacao = pontuacaoSalva;
+	    this.level = (pontuacao / 500) + 1;
+	    velocidadeNormal();
+	    if (labelPontuacao != null) labelPontuacao.setText("Pontuação: " + pontuacao);
+	    if (labelLevel != null)     labelLevel.setText("Level: " + level);
+	}
+	
+	/**
+	 * Define a peça atual com tipo e posição vindos do save.
+	 *
+	 * @param tipo índice do tipo (0–6)
+	 * @param x    posição X na grade
+	 * @param y    posição Y na grade
+	 */
+	public void setBlocoAtual(int tipo, int x, int y) {
+	    this.bloco = criarTetromino(tipo);
+	    this.bloco.setXY(x, y);
+	}
+	
+	/**
+	 * Define a próxima peça com tipo vindo do save.
+	 *
+	 * @param tipo índice do tipo (0–6)
+	 */
+	public void setProximoBloco(int tipo) {
+	    this.proximoBloco = criarTetromino(tipo);
+	}
+	
+	/**
+	 * Fabrica um Tetromino pelo seu índice de tipo.
+	 *
+	 * @param tipo índice de 0 a 6
+	 * @return Tetromino correspondente
+	 */
+	private Tetromino criarTetromino(int tipo) {
+	    switch (tipo) {
+	        case 0: return Tetromino.blocoI();
+	        case 1: return Tetromino.blocoO();
+	        case 2: return Tetromino.blocoT();
+	        case 3: return Tetromino.blocoL();
+	        case 4: return Tetromino.blocoJ();
+	        case 5: return Tetromino.blocoS();
+	        case 6: return Tetromino.blocoZ();
+	        default: return Tetromino.blocoI();
+	    }
+	}
+
+	/**
 	 * Retorna se o jogo terminou
 	 * @return Verdadeiro se o jogo acabou
 	 */
