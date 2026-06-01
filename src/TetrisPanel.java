@@ -44,6 +44,12 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
         area = new Board();
         area.setBounds(140, 0, 520, 640);
         add(area);
+
+		// Bloco novo — carrega save se solicitado
+		if (carregarJogo) {
+    		SalvarJogo salvarJogo = new SalvarJogo();
+    		salvarJogo.carregar(area);
+		}
         
         labelPontuacao = new JLabel("Pontuação: 0", SwingConstants.CENTER);
         labelPontuacao.setForeground(Color.WHITE); 
@@ -77,10 +83,6 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
         
         setVisible(true);
         requestFocusInWindow();
-    }
-
-    public static void main(String args[]) {
-    	new TetrisPanel();
     }
 
     @Override
