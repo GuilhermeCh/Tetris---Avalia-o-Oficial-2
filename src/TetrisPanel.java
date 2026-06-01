@@ -33,7 +33,7 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
 	/**
 	 * Constrói a janela do Tetris, inicializa o painel de jogo e o label de pontuação
 	 */
-    public TetrisPanel() {
+    public TetrisPanel(boolean carregarJogo) {
     	setTitle("Tetris");
         setSize(665, 640);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
