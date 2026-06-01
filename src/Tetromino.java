@@ -222,6 +222,17 @@ public class Tetromino {
 	 * Move o bloco para a direita na grade
 	 */
 	public void moveDireita() { x++ ;}
+
+	/**
+	 * Define diretamente a posição X e Y da peça (usado no carregamento de save).
+	 *
+	 * @param x posição X na grade
+	 * @param y posição Y na grade
+	 */
+	public void setXY(int x, int y) {
+	    this.x = x;
+	    this.y = y;
+	}
 	
 	/**
 	 * Retorna a borda esquerda da grade
