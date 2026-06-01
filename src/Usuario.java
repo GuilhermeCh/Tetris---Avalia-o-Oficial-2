@@ -10,11 +10,13 @@ public class Usuario implements Serializable{
 	private String nome;
 	private int pontuacao;
 	private int level;
+	private int tentativas;
 	
 	public Usuario(String nome, int pontuacao, int level) {
 		this.nome = nome;
 		this.pontuacao = pontuacao;
 		this.level = level;
+		this.tentativas = 1;
 	}
 	
 	public String getNome() {
@@ -27,6 +29,22 @@ public class Usuario implements Serializable{
 
 	public int getLevel() {
 		return level;
+	}
+
+	public int getTentativas() {
+		return tentativas;
+	}
+
+	public void setPontuacao(int pontuacao) {
+		this.pontuacao = pontuacao;
+	}
+	
+	public void setLevel(int level) {
+		this.level = level;
+	}
+	
+	public void setTentativas(int tentativas) { 
+		this.tentativas = tentativas; 
 	}
 
 }

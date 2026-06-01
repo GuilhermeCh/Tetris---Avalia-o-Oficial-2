@@ -5,16 +5,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 public class PainelLeaderboard extends JFrame {
 	private JTextArea textoLeaderboard;
@@ -27,7 +23,7 @@ public class PainelLeaderboard extends JFrame {
 		setTitle("Leaderboar");
         setSize(400, 500);
         setResizable(false);
-        setLayout(new GridLayout(5, 3, 10, 10));
+        setLayout(new GridLayout(5, 3));
         
         add(new JLabel("")); 
         textoLeaderboard = new JTextArea("Leaderboard");
@@ -51,10 +47,11 @@ public class PainelLeaderboard extends JFrame {
 	private void carregarRanking() {
 		if (arquivo.exists() && arquivo.length() > 0) {
             try {
+            	// Converte o Json em objeto e é colado em uma lista
     			BufferedReader reader = new BufferedReader(new FileReader(arquivo));
     			Usuario[] jogadores = gson.fromJson(reader, Usuario[].class);
 
-    			// Coloca os jogadores em posiçao de melhores pontuações
+    			// Coloca os jogadores em posiçao de numeros de tentativas
 				if (jogadores != null) {
 					for (int i = 0; i < jogadores.length - 1; i++) {
 						for (int f = i + 1; f < jogadores.length; f++) {
@@ -63,29 +60,32 @@ public class PainelLeaderboard extends JFrame {
 							    jogadores[i] = jogadores[f];
 							    jogadores[f] = temp;
 							}
+							if (jogadores[f].getTentativas() < jogadores[i].getTentativas()) {
+							    Usuario temp = jogadores[i];
+							    jogadores[i] = jogadores[f];
+							    jogadores[f] = temp;
+							}
 						}
 					}
 				}
-    			
     			// Imprime as posições dos jogadores
     			for (int i = 0; i < ranks.length; i++) {
-                    if (i < jogadores.length) {
+                    if (jogadores != null && i < jogadores.length) {
                         ranks[i].setText(
                             (i + 1) + "º Lugar\n" +
                             jogadores[i].getNome() + "\n" +
-                            jogadores[i].getPontuacao() + " pts\n" +
-                            jogadores[i].getLevel() + " lvl"
+                            jogadores[i].getPontuacao() + " pontos\n" +
+                            jogadores[i].getLevel() + " level\n" +
+                            jogadores[i].getTentativas() + " tentativas\n"
                         );
                     } else {
                         ranks[i].setText((i + 1) + "º Lugar\n--- pts");
                     }
                 }
-    			
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-	
         getContentPane().setBackground(Color.BLACK);
 	}
 	
