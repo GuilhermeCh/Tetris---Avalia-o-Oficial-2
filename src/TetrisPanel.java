@@ -29,6 +29,7 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
 	private JLabel labelLevel;
 	private JButton labelLeaderboard;
 	private JButton botaoReset;
+	private JButton botaoSalvar;
 
 	/**
 	 * Constrói a janela do Tetris, inicializa o painel de jogo e o label de pontuação
@@ -62,7 +63,14 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
         labelLevel.setBounds(20, 240, 100, 30);
         area.setLabelLevel(labelLevel);
         add(labelLevel);
-        
+		
+		botaoSalvar = new JButton("Salvar");
+		botaoSalvar.setFont(new Font("Lucida Console", Font.BOLD, 14));
+		botaoSalvar.setBounds(10, 420, 120, 40);
+		botaoSalvar.addActionListener(this);
+		botaoSalvar.setFocusable(false);
+		add(botaoSalvar);
+		
         labelLeaderboard = new JButton("Leaderboard");
         labelLeaderboard.setFont(new Font("Lucida Console", Font.BOLD, 12));
         labelLeaderboard.setBounds(10, 470, 120, 40);
@@ -113,6 +121,12 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
     		repaint();
     		
     		requestFocusInWindow();
+    	}
+
+		if (menuEvent.getSource() == botaoSalvar) {
+    	    SalvarJogo salvarJogo = new SalvarJogo();
+    	    salvarJogo.salvar(area);
+    	    JOptionPane.showMessageDialog(this, "Jogo salvo com sucesso!");
     	}
     	
     	// Tela dos LeaderBoard
