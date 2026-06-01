@@ -26,7 +26,6 @@ public class SalvarJogo {
         public int tipoProximoBloco;
         public int blocoX;
         public int blocoY;
-        public int rotacaoAtual;
     }
 
     /**
@@ -42,7 +41,6 @@ public class SalvarJogo {
         estado.tipoProximoBloco = board.getTipoProximoBloco();
         estado.blocoX = board.getBlocoAtual().getX();
         estado.blocoY = board.getBlocoAtual().getY();
-        estado.rotacaoAtual = board.getRotacaoBlocoAtual();
 
         // Converte a grade de Color[][] para String[][]
         Color[][] grade = board.getFundoBlocos();
@@ -65,20 +63,35 @@ public class SalvarJogo {
     }
 
     /**
-     * Carrega o estado do jogo salvo em savegame.json.
+     * Carrega o estado salvo no savegame.json direto no Board recebido.
      *
-     * @return O EstadoJogo carregado, ou null se não existir arquivo de save
+     * @param board O painel de jogo que receberá o estado carregado
      */
-    public EstadoJogo carregar() {
+    public void carregar(Board board) {
         File arquivo = new File(ARQUIVO_SAVE);
-        if (!arquivo.exists() || arquivo.length() == 0) {
-            return null;
-        }
+        if (!arquivo.exists() || arquivo.length() == 0) return;
+    
         try (FileReader reader = new FileReader(arquivo)) {
-            return gson.fromJson(reader, EstadoJogo.class);
+            EstadoJogo estado = gson.fromJson(reader, EstadoJogo.class);
+            if (estado == null) return;
+    
+            board.setPontuacaoCarregada(estado.pontuacao);
+    
+            Color[][] grade = board.getFundoBlocos();
+            for (int l = 0; l < estado.grade.length; l++) {
+                for (int c = 0; c < estado.grade[0].length; c++) {
+                    if (estado.grade[l][c] != null) {
+                        grade[l][c] = Color.decode(estado.grade[l][c]);
+                    }
+                }
+            }
+    
+            board.setBlocoAtual(estado.tipoBlocoAtual, estado.blocoX, estado.blocoY);
+            board.setProximoBloco(estado.tipoProximoBloco);
+            board.repaint();
+    
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
     }
 
