@@ -12,13 +12,19 @@ import javax.swing.JTextArea;
 
 import com.google.gson.Gson;
 
+/**
+ * Janela que exibe o ranking com os 10 melhores jogadores.
+ */
 public class PainelLeaderboard extends JFrame {
 	private JTextArea textoLeaderboard;
 	private JTextArea[] ranks = new JTextArea[10];
 
     private File arquivo = new File("scores.json");
     private Gson gson = new Gson();
-    
+
+	/**
+     * Constrói a janela do leaderboard e carrega o ranking.
+     */
 	public PainelLeaderboard() {
 		setTitle("Leaderboar");
         setSize(400, 500);
@@ -43,7 +49,10 @@ public class PainelLeaderboard extends JFrame {
         }
         carregarRanking();
 	}
-	
+
+	/**
+     * Lê o arquivo scores.json, ordena os jogadores por pontuação e exibe na tela.
+     */
 	private void carregarRanking() {
 		if (arquivo.exists() && arquivo.length() > 0) {
             try {
@@ -88,7 +97,10 @@ public class PainelLeaderboard extends JFrame {
         }
         getContentPane().setBackground(Color.BLACK);
 	}
-	
+
+	/**
+     * Atualiza o leaderboard recarregando os dados do arquivo scores.json.
+     */
 	public void atualizarLeaderboard() {
         carregarRanking();
     }
