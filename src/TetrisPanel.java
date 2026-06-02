@@ -93,6 +93,11 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
         requestFocusInWindow();
     }
 
+	/**
+     * Trata os eventos dos botões Reset, Salvar e Leaderboard.
+     *
+     * @param menuEvent Evento de clique
+     */
     @Override
     public void actionPerformed(ActionEvent menuEvent) {
         // Faz o reset do game
@@ -135,7 +140,12 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
     		rank.setVisible(true);
     	}
     }
-    
+
+	 /**
+     * Trata as teclas pressionadas para mover e rotacionar a peça.
+     *
+     * @param e Evento de teclado
+     */
     @Override
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -150,7 +160,12 @@ public class TetrisPanel extends JFrame implements KeyListener, ActionListener {
 			area.hardDrop();
 		}
 	}
-    
+
+	 /**
+     * Desativa o soft drop quando a tecla é solta.
+     *
+     * @param e Evento de teclado
+     */
     @Override
 	public void keyReleased(KeyEvent e) {
     	area.velocidadeNormal();
