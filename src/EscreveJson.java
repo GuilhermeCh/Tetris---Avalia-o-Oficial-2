@@ -9,17 +9,28 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+/**
+ * Responsável por gravar os dados do jogador no arquivo scores.json.
+ */
 public class EscreveJson{
 
     private Usuario usuario;
 	Gson gson = new GsonBuilder().setPrettyPrinting().create();
     File arquivo = new File("scores.json");
 
-    // Construtor
+    /**
+     * @param usuario Usuário com os dados a serem gravados
+     */
     public EscreveJson(Usuario usuario) {
         this.usuario = usuario;
     }
-	
+
+	/**
+     * Grava os dados do usuário no arquivo scores.json.
+     * <p>
+     * Se o arquivo já existir, mantém os dados anteriores e adiciona o novo jogador.
+     * </p>
+     */
 	public void gerarJSON() {
 		JsonArray listaUsuario = new JsonArray();
 
