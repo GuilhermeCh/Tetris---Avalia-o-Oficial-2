@@ -16,6 +16,8 @@ public class Tetromino {
 	private int x;
 	private int y;
 	
+	public static final Color NEW_ORANGE = new Color(255,133,0);
+	
 	private int rotacaoAtual;
 	private int [][][] blocos;
 	
@@ -79,7 +81,7 @@ public class Tetromino {
 	        	{1, 0}, 
 				{1, 0}, 
 				{1, 1} 
-        	}, Color.orange);
+        	}, NEW_ORANGE);
     }
     
     /**
@@ -152,7 +154,6 @@ public class Tetromino {
 		while (getBordaDireita() > gradeColuna) {
 			x--;
 		}
-
 	    // Corrige ultrapassagem da borda esquerda
 	    while (getBordaEsquerda() < 0) {
 	    	x++;
@@ -221,6 +222,17 @@ public class Tetromino {
 	 * Move o bloco para a direita na grade
 	 */
 	public void moveDireita() { x++ ;}
+
+	/**
+	 * Define diretamente a posição X e Y da peça (usado no carregamento de save).
+	 *
+	 * @param x posição X na grade
+	 * @param y posição Y na grade
+	 */
+	public void setXY(int x, int y) {
+	    this.x = x;
+	    this.y = y;
+	}
 	
 	/**
 	 * Retorna a borda esquerda da grade
