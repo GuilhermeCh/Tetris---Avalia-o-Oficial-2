@@ -109,14 +109,15 @@ public class Board extends JPanel {
 	public int getLevel() { return level; }
 	
 	/**
-	 * 
+	 * Exibe uma janela para o jogador informar seu nome.
 	 */
 	public void painelDigitarNome() {
     	nomeJogador = JOptionPane.showInputDialog("Digite o seu nome:");
     }
 	
 	/**
-	 * 
+	 * Retorna o nome informado pelo jogador.
+	 * @return Nome do jogador
 	 */
 	public String getNomeJogador() { return nomeJogador; }
 	
