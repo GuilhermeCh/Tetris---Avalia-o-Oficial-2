@@ -10,6 +10,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * Responsável por gravar e atualizar os dados do jogador no arquivo scores.json.
+ */
 public class EscreveJson{
 
     private Usuario usuario;
@@ -20,7 +23,14 @@ public class EscreveJson{
     public EscreveJson(Usuario usuario) {
         this.usuario = usuario;
     }
-	
+
+	/**
+     * Grava ou atualiza os dados do usuário no arquivo scores.json.
+     * <p>
+     * Se o jogador já existir no ranking, atualiza tentativas, pontuação e level.
+     * Caso contrário, adiciona o jogador como novo.
+     * </p>
+     */
 	public void gerarJSON() {
 		List<Usuario> listaUsuario = new ArrayList<>();
 		boolean usuarioNovo = true;
