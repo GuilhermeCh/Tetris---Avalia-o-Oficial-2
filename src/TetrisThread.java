@@ -1,13 +1,21 @@
-
+/**
+ * Thread responsável por controlar a descida automática das peças e a velocidade do jogo.
+ */
 public class TetrisThread extends Thread{
 	
 	private Board grade;
 	private PainelLeaderboard rank;
-	
+
+	 /**
+     * @param grade Board onde o jogo está sendo executado
+     */
 	public TetrisThread(Board grade) {
 		this.grade = grade;
 	}
-	
+
+	/**
+     * Loop principal da thread — spawna peças, move para baixo e remove linhas completas.
+     */
 	@Override
 	public void run() {
 		while(true) {
@@ -35,6 +43,9 @@ public class TetrisThread extends Thread{
 		}
 	}
 	
+	/**
+     * Encerra a partida, solicita o nome do jogador e salva a pontuação no ranking.
+     */
 	private void finalizarJogo() {
         grade.repaint();
         grade.painelDigitarNome();
